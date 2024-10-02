@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model player {
+  id       Int     @id @default(autoincrement()) // Auto-incremented ID
+  name     String // Player's name
+  handicap Decimal @db.Decimal(5, 2) // Decimal value for handicap (e.g., 5.2)
+  flight   Int
+
+  holescores holescore[] // Relationship with HoleScore model
+}
+
+model hole {
+  holeid      Int @id @default(autoincrement()) // Auto-incremented hole ID
+  par         Int // Par for the hole
+  strokeindex Int // Stroke index for the hole
+
+  holescores holescore[] // Relationship with HoleScore model
+}
+
+model holescore {
+  id          Int @id @default(autoincrement()) // Auto-incremented ID for the score entry
+  playerid    Int // Foreign key to the Player model
+  holeid      Int // Foreign key to the Hole model
+  strokes     Int // Number of strokes taken on the hole
+  bruttoscore Int // Brutto score for the hole
+  nettoscore  Int // Netto score for the hole
+  mulligans   Int // Number of mulligans used
+  putts       Int // Number of putts taken
+  drinks      Int // Number of drinks consumed on the course
+
+  player player @relation(fields: [playerid], references: [id]) // Relationship with Player model
+  hole   hole   @relation(fields: [holeid], references: [holeid]) // Relationship with Hole model
+
+    @@unique([playerid, holeid])
+}

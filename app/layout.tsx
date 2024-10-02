@@ -15,8 +15,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme="mytheme">
+      <body className='bg-primary h-screen overflow-hidden text-white'>
+        <main className='p-5'>{children}</main>
+      </body>
     </html>
   )
 }
