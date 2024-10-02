@@ -14,8 +14,7 @@ type Leaderboard = Array<{
 
 const Leaderboard = () => {
   const fetcher = () => fetch('/api/leaderboard').then((res) => res.json());
-  //const { data, error, isLoading } = useSWR('/api/leaderboard', fetcher, { refreshInterval: 1000 });
-  const { data, error, isLoading } = useSWR('/api/leaderboard', fetcher);
+  const { data, error, isLoading } = useSWR('/api/leaderboard', fetcher, { refreshInterval: 1000 });
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error...</div>
