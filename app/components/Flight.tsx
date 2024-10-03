@@ -118,14 +118,14 @@ const Flight = ({ searchParams: { flightId }, holes, flight }: Props) => {
     return (
         <>
             {currentHole && (
-                <div className='flex flex-col min-h-svh p-4'>
+                <div className='flex flex-col maxHeightFlight p-4'>
                     <div>
                         <h1 className="text-2xl font-bold text-center ">LOCH {selectedOption}</h1>
                         <h2 className="text-xl font-normal text-center mb-2">PAR {currentHole.par}</h2>
                     </div>
 
 
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto flex-grow">
                         {flight.map((player) => (
                             <div key={player.id} className='flex flex-col mb-2 gap-s'>
 
@@ -142,11 +142,12 @@ const Flight = ({ searchParams: { flightId }, holes, flight }: Props) => {
 
                         ))}
                     </div>
+                    <div className='bg-primary'>
+                        <HoleSelector selectedOption={selectedOption} onHoleChange={handleHoleChange} />
+                    </div>
                 </div>
             )}
-            <div className='btm-nav bottom-20 bg-primary'>
-                <HoleSelector selectedOption={selectedOption} onHoleChange={handleHoleChange} />
-            </div>
+
             <div className='btm-nav bg-accent grid grid-cols-5 items-center px-4 gap-2'>
                 <Link href='/leaderboard' className='btn btn-secondary text-center'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
