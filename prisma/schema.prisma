@@ -17,7 +17,8 @@ model player {
   id       Int     @id @default(autoincrement()) // Auto-incremented ID
   name     String // Player's name
   handicap Decimal @db.Decimal(5, 2) // Decimal value for handicap (e.g., 5.2)
-  flight   Int
+  flight   Int 
+  gender   String @default("")
 
   holescores holescore[] // Relationship with HoleScore model
 }

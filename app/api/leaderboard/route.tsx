@@ -26,11 +26,14 @@ export async function GET(req: NextRequest) {
       let nettoScore = 0;
       let totalPutts = 0;
       let totalMulligans = 0;
+      let totalDrinks = 0;
       let holesPlayed = player.holescores.length;
 
       // Calculate the player's course handicap
       const handicap = player.handicap || 0;
-      const courseHandicap = Math.round(parseFloat(handicap.toString()) * 133 / 113 - 71.8 + 72);
+      const courseHandicap = player.gender === 'Female'
+        ? Math.round(parseFloat(handicap.toString()) * 131 / 113 - 73.8 + 72)
+        : Math.round(parseFloat(handicap.toString()) * 133 / 113 - 71.8 + 72);
 
       // Iterate over player's hole scores to calculate toPar, bruttoScore, and nettoScore
       player.holescores.forEach((holeScore) => {
@@ -68,6 +71,7 @@ export async function GET(req: NextRequest) {
         // Sum up putts and mulligans
         totalPutts += holeScore.putts;
         totalMulligans += holeScore.mulligans;
+        totalDrinks += holeScore.drinks;
       });
 
       return {
@@ -78,6 +82,7 @@ export async function GET(req: NextRequest) {
         holesPlayed,
         totalPutts,
         totalMulligans,
+        totalDrinks
       };
     });
 

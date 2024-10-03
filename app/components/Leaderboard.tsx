@@ -1,7 +1,6 @@
-// components/Leaderboard.tsx
 'use client'; // Use this in any component that runs client-side logic (SWR)
 
-import React from 'react';
+import React, { useState } from 'react';
 import useSWR from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -14,6 +13,7 @@ type Leaderboard = Array<{
   holesPlayed: number;
   totalPutts: number;
   totalMulligans: number;
+  totalDrinks: number;
 }>;
 
 const Leaderboard = ({ initialLeaderboard }: { initialLeaderboard: Leaderboard }) => {
@@ -24,30 +24,51 @@ const Leaderboard = ({ initialLeaderboard }: { initialLeaderboard: Leaderboard }
     refreshInterval: 1000, // Revalidate every 1 second
   });
 
+  const [sortKey, setSortKey] = useState<string>('toPar');
+  const [sortOrder, setSortOrder] = useState<boolean>(true); // true for ascending, false for descending
+
   if (error) return <div>Error loading leaderboard</div>;
   if (!leaderboard) return <div>Loading...</div>;
 
-  const test: Leaderboard = leaderboard;
+  // Filter out players who haven't played at least one hole
+  const filteredLeaderboard = leaderboard.filter((player: Leaderboard[0]) => player.holesPlayed > 0);
+
+  const sortedLeaderboard = [...filteredLeaderboard].sort((a, b) => {
+    const direction = sortOrder ? 1 : -1;
+    if (a[sortKey] < b[sortKey]) return -1 * direction;
+    if (a[sortKey] > b[sortKey]) return 1 * direction;
+    return 0;
+  });
+
+  const handleSort = (key: keyof Leaderboard[0]) => {
+    if (sortKey === key) {
+      setSortOrder(!sortOrder); // Toggle sort order if the same column is clicked
+    } else {
+      setSortKey(key); // Set new sort key and default to ascending order
+      setSortOrder(true);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-8">Mulligan Cup 2024 Leaderboard</h1>
+      <h1 className="text-2xl font-bold text-center mb-8">Mulligan Cup 2024 Live-Leaderboard</h1>
       <div className="overflow-x-auto">
         <table className="table-sm w-full">
           <thead className="text-left">
             <tr>
               <th>Pos</th>
               <th>Player</th>
-              <th>To Par</th>
+              <th onClick={() => handleSort('toPar')} className="cursor-pointer">To Par</th>
               <th>Thru</th>
-              <th>Brutto</th>
-              <th>Netto</th>
-              <th>Putts</th>
-              <th>Mulligans</th>
+              <th onClick={() => handleSort('bruttoScore')} className="cursor-pointer">Brutto</th>
+              <th onClick={() => handleSort('nettoScore')} className="cursor-pointer">Netto</th>
+              <th onClick={() => handleSort('totalPutts')} className="cursor-pointer">Putts</th>
+              <th onClick={() => handleSort('totalMulligans')} className="cursor-pointer">Mulligans</th>
+              <th onClick={() => handleSort('totalDrinks')} className="cursor-pointer">Drinks (Schläger)</th>
             </tr>
           </thead>
           <tbody className="font-medium">
-            {test.map((player, index) => (
+            {sortedLeaderboard.map((player, index) => (
               <tr key={index} className="border-y-2">
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
@@ -57,6 +78,7 @@ const Leaderboard = ({ initialLeaderboard }: { initialLeaderboard: Leaderboard }
                 <td>{player.nettoScore}</td>
                 <td>{player.totalPutts}</td>
                 <td>{player.totalMulligans}</td>
+                <td>{player.totalDrinks}</td>
               </tr>
             ))}
           </tbody>

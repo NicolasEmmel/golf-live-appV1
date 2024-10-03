@@ -16,43 +16,19 @@ export async function POST(req: NextRequest) {
         await prisma.holescore.deleteMany();
         await prisma.player.deleteMany();
 
-        // Assuming holes are static and you don't want to delete them
-        const holes = await prisma.hole.findMany(); // Fetch existing holes
-
         // Add new players
         const newPlayers = await Promise.all(
-            players.map(async (player: { name: string; handicap: string; flightNumber: string }) => {
+            players.map(async (player: { name: string; handicap: string; flightNumber: string, gender: string }) => {
                 return prisma.player.create({
                     data: {
                         name: player.name,
                         handicap: player.handicap,
+                        gender: player.gender,
                         flight: parseInt(player.flightNumber),
                     },
                 });
             })
         );
-
-        // Add initial entries in HoleScore for each player and each hole
-        // await Promise.all(
-        //     newPlayers.map(async (player) => {
-        //         return Promise.all(
-        //             holes.map((hole) => {
-        //                 return prisma.holescore.create({
-        //                     data: {
-        //                         playerid: player.id,
-        //                         holeid: hole.holeid,
-        //                         strokes: 0,
-        //                         bruttoscore: 0,
-        //                         nettoscore: 0,
-        //                         mulligans: 0,
-        //                         putts: 0,
-        //                         drinks: 0,
-        //                     },
-        //                 });
-        //             })
-        //         );
-        //     })
-        // );
 
         return NextResponse.json({ message: 'Tournament initialized successfully' });
     } catch (error) {

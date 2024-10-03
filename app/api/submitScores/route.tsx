@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     try {
         // Loop through each player's scores in the holeScores array
         for (const score of holeScores) {
-            const { playerId, holeId, strokes, putts, mulligans } = score;
+            const { playerId, holeId, strokes, putts, mulligans, drinks } = score;
 
             // Use Prisma upsert to insert or update the HoleScore
             await prisma.holescore.upsert({
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
                     strokes,
                     putts,
                     mulligans,
+                    drinks
                 },
                 create: {
                     playerid: playerId,
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
                     nettoscore: 0,
                     putts,
                     mulligans,
-                    drinks: 0,
+                    drinks,
                 },
             });
         }
