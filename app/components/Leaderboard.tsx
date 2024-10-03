@@ -17,7 +17,7 @@ type Leaderboard = Array<{
 }>;
 
 const Leaderboard = ({ initialLeaderboard }: { initialLeaderboard: Leaderboard }) => {
-  const version: string = "1.0";
+  const version: string = "1.1";
   // Use SWR to revalidate the leaderboard every second
   const { data: leaderboard, error } = useSWR('/api/leaderboard', fetcher, {
     fallbackData: initialLeaderboard, // Start with initial server-side data
