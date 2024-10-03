@@ -1,5 +1,10 @@
-import React from 'react'
+// components/Leaderboard.tsx
+'use client'; // Use this in any component that runs client-side logic (SWR)
+
+import React from 'react';
 import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type Leaderboard = Array<{
   name: string;
@@ -10,23 +15,25 @@ type Leaderboard = Array<{
   totalPutts: number;
   totalMulligans: number;
 }>;
-;
 
-const Leaderboard = () => {
-  const fetcher = () => fetch('/api/leaderboard').then((res) => res.json());
-  const { data, error, isLoading } = useSWR('/api/leaderboard', fetcher, { refreshInterval: 1000 });
+const Leaderboard = ({ initialLeaderboard }: { initialLeaderboard: Leaderboard }) => {
+  // Use SWR to revalidate the leaderboard every second
+  const { data: leaderboard, error } = useSWR('/api/leaderboard', fetcher, {
+    fallbackData: initialLeaderboard, // Start with initial server-side data
+    refreshInterval: 1000, // Revalidate every 1 second
+  });
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error...</div>
+  if (error) return <div>Error loading leaderboard</div>;
+  if (!leaderboard) return <div>Loading...</div>;
 
-  const leaderboard: Leaderboard = data;
+  const test: Leaderboard = leaderboard;
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-center mb-8">Mulligan Cup 2024 Leaderboard</h1>
       <div className="overflow-x-auto">
         <table className="table-sm w-full">
-          <thead className='text-left'>
+          <thead className="text-left">
             <tr>
               <th>Pos</th>
               <th>Player</th>
@@ -38,9 +45,9 @@ const Leaderboard = () => {
               <th>Mulligans</th>
             </tr>
           </thead>
-          <tbody className='font-medium'>
-          {leaderboard.map((player, index) => (
-              <tr key={index} className='border-y-2'>
+          <tbody className="font-medium">
+            {test.map((player, index) => (
+              <tr key={index} className="border-y-2">
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
                 <td>{player.toPar}</td>
@@ -55,7 +62,7 @@ const Leaderboard = () => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Leaderboard
+export default Leaderboard;

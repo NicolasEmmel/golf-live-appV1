@@ -1,6 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+export const dynamic = 'force-dynamic'
 
 const prisma = new PrismaClient();
 
@@ -30,7 +31,6 @@ export async function GET(req: NextRequest) {
       // Calculate the player's course handicap
       const handicap = player.handicap || 0;
       const courseHandicap = Math.round(parseFloat(handicap.toString()) * 133 / 113 - 71.8 + 72);
-      
 
       // Iterate over player's hole scores to calculate toPar, bruttoScore, and nettoScore
       player.holescores.forEach((holeScore) => {
@@ -92,9 +92,12 @@ export async function GET(req: NextRequest) {
       return a.toPar - b.toPar; // Sort ascending by To Par (lower is better)
     });
 
-    return NextResponse.json(leaderboard);
+    // Set Cache-Control header to ensure no caching
+    const response = NextResponse.json(leaderboard);
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    return response;
   } catch (error) {
     console.error('Error fetching leaderboard data:', error);
-    return NextResponse.json({ message: 'Internal Server Error' });
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

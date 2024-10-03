@@ -19,8 +19,6 @@ export async function POST(req: NextRequest) {
         // Assuming holes are static and you don't want to delete them
         const holes = await prisma.hole.findMany(); // Fetch existing holes
 
-        console.log(JSON.stringify(players));
-
         // Add new players
         const newPlayers = await Promise.all(
             players.map(async (player: { name: string; handicap: string; flightNumber: string }) => {
