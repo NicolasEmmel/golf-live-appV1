@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 interface Flight {
   flight: number;
@@ -9,6 +9,7 @@ interface Flight {
 }
 
 const FlightsPage = () => {
+  mutate('/api/flight');
   const fetcher = () => fetch('/api/flight').then((res) => res.json());
   const { data, error, isLoading } = useSWR('/api/flight', fetcher);
   const router = useRouter();
