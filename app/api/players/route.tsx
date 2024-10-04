@@ -1,40 +1,28 @@
+// pages/api/players.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-interface PatchObj{
-    hid: number,
-    pid: number,
-    inc: number
+export async function GET(req: NextRequest) {
+    try {
+        const players = await prisma.player.findMany();
+        return NextResponse.json(players, {status: 201});
+    } catch (error) {
+        return NextResponse.json({ error: 'Error fetching players' }, {status: 404});
+    }
+
 }
 
-export async function PATCH(request: NextRequest){
-    const patchObj: PatchObj = await request.json();
-
+export async function POST(req: NextRequest) {
     try {
-        const hId = parseInt(patchObj.hid.toString());
-        const pId = parseInt(patchObj.pid.toString());
-        const inc = parseInt(patchObj.inc.toString());
-
-        await prisma.holescore.update({
-            where:{
-                playerid_holeid:{
-                    playerid: pId,
-                    holeid: hId
-                }
-            },
-            data:{
-                strokes:{
-                    increment: inc
-                }
-            }
-        })
-
-        return NextResponse.json("Updated", {status: 201});
+        const { name, handicap, flight, gender } = await req.json();
+        const newPlayer = await prisma.player.create({
+            data: { name: name, handicap: Number(handicap), flight: Number(flight), gender: gender },
+        });
+        return NextResponse.json(newPlayer, {status:201})
     } catch (error) {
-        console.error('Error fetching leaderboard:', error);
-        return NextResponse.json({ error: 'Error in players' }, {status: 404});
+        return NextResponse.json({ error: 'Error creating player' }, {status: 404});
     }
 }

@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
       // Calculate the player's course handicap
       const handicap = player.handicap || 0;
       const courseHandicap = player.gender === 'Female'
-        ? Math.round(parseFloat(handicap.toString()) * 131 / 113 - 73.8 + 72)
-        : Math.round(parseFloat(handicap.toString()) * 133 / 113 - 71.8 + 72);
+        ? (-1 * Math.round((-1* parseFloat(handicap.toString())) * 131 / 113 - 73.8 + 72))
+        : (-1 * Math.round((-1* parseFloat(handicap.toString())) * 133 / 113 - 71.8 + 72));
 
       // Iterate over player's hole scores to calculate toPar, bruttoScore, and nettoScore
       player.holescores.forEach((holeScore) => {

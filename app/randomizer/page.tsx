@@ -6,9 +6,9 @@ const RandomizerPage = () => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const clubs = [
-    "Lob Wedge", "Sand Wedge", "Pitching Wedge", "9er Eisen", "8er Eisen", 
-    "7er Eisen", "6er Eisen", "5er Eisen", "4er Eisen", "3er Eisen", 
-    "5 Wood", "3 Wood", "Driver"
+    "Lob Wedge (1)", "Sand Wedge (2)", "Pitching Wedge (3)", "9er Eisen (4)", "8er Eisen (5)", 
+    "7er Eisen (6)", "6er Eisen (7)", "5er Eisen (8)", "4er Eisen (9)", "3er Eisen (10)", 
+    "5 Wood (11)", "3 Wood (12)", "Driver (13)"
   ];
 
   const handleRandomize = () => {
