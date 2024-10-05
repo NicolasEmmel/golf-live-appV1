@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         : (-1 * Math.round((-1* parseFloat(handicap.toString())) * 133 / 113 - 71.8 + 72));
 
       // Iterate over player's hole scores to calculate toPar, bruttoScore, and nettoScore
-      player.holescores.forEach((holeScore) => {
+      player.holescores.forEach((holeScore, index) => {
         const par = holeScore.hole.par;
         const strokeIndex = holeScore.hole.strokeindex;
         const strokes = holeScore.strokes;
@@ -59,6 +59,16 @@ export async function GET(req: NextRequest) {
             extraStrokes = Math.floor(courseHandicap / 18) + (courseHandicap % 18 >= strokeIndex ? 1 : 0);
           }
         }
+
+        if (courseHandicap < 0) {
+          // Add strokes to the easiest holes
+          const adjustedHandicap = Math.abs(courseHandicap);
+          if (index < adjustedHandicap) {
+            extraStrokes = -1; // Add one extra stroke to the easiest holes
+          }
+        }
+
+        console.log(extraStrokes);
 
         // Calculate "Netto Score" for this hole
         const nettoDiffToPar = strokes - extraStrokes - par;
